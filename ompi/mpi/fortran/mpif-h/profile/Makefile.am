@@ -427,11 +427,11 @@ CLEANFILES += psizeof_f.f90
 # Build the MPI_SIZEOF code in a separate convenience library (see
 # lengthy comment in ompi/mpi/fortran/mpif-h/Makefile.am for an
 # explanation why).
+EXTRA_LTLIBRARIES = libmpi_mpifh_psizeof.la
 if BUILD_FORTRAN_SIZEOF
-noinst_LTLIBRARIES += libmpi_mpifh_psizeof.la
 # Do not dist this file; it is generated
 nodist_libmpi_mpifh_psizeof_la_SOURCES = psizeof_f.f90
-libmpi_mpifh_pmpi_la_LIBADD += libmpi_mpifh_psizeof.la
+libmpi_mpifh_pmpi_la_LIBADD += psizeof_f.lo
 endif
 
 sizeof_pl=$(top_srcdir)/ompi/mpi/fortran/base/gen-mpi-sizeof.pl

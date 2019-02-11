@@ -85,7 +85,7 @@ lib@OMPI_LIBMPI_NAME@_mpifh_la_SOURCES =
 CLEANFILES += sizeof_f.f90
 
 # If we're building the MPI_SIZEOF interfaces, generate the source
-# code in sizeof_f.f90 (via a perl script).  Normally, we'd just add
+# code in sizeof_f.f90 (via a perl script). Normally, we'd just add
 # sizeof_f.f90 to the libmpi_mpif_la_SOURCES and be done with it.
 # However, since this is the first *actual Fortran* source that we've
 # added to libmpi_mpif_la_SOURCEs, this causes Libtool to use the
@@ -95,22 +95,19 @@ CLEANFILES += sizeof_f.f90
 # -Wl arguments, which basically causes the resulting libmpi_mpif.so
 # to be borked.
 #
-# To get around this, we compile sizeof_f.f90 into its own LT
-# convenience library, and then we LIBADD that convenience library
-# into the main libmpi_mpifh.la.  In this way, we basically trick
-# Libtool into still using the C linker to create libmpi_mpif.la, and
-# our -Wl flags therefore don't get re-ordered.
+# To get around this, we explicitly set the linking command to $(LINK),
+# which means that the C linker is used unconditionally when creating
+# libmpi_mpif.la, so our -Wl flags therefore don't get re-ordered.
 #
-# All this being said, we can't rely on Automake/Libtool not figuring
-# out this workaround indefinitely.  So Jeff advised Absoft to fix
+# However, we might want to use the Fortran linker in the future, e.g.
+# to generate consistent inherited_linker_flags (with our patched libtool)
+# in all of our Fortran libraries. So Jeff advised Absoft to fix
 # this bug in Sep 2014.
-noinst_LTLIBRARIES=
 if BUILD_FORTRAN_SIZEOF
-noinst_LTLIBRARIES += libmpi_mpifh_sizeof.la
 # Do not dist this file; it is generated
-nodist_libmpi_mpifh_sizeof_la_SOURCES = sizeof_f.f90
-lib@OMPI_LIBMPI_NAME@_mpifh_la_LIBADD += libmpi_mpifh_sizeof.la
+nodist_lib@OMPI_LIBMPI_NAME@_mpifh_la_SOURCES = sizeof_f.f90
 endif
+lib@OMPI_LIBMPI_NAME@_mpifh_la_LINK = $(LINK)
 
 sizeof_pl = $(top_srcdir)/ompi/mpi/fortran/base/gen-mpi-sizeof.pl
 

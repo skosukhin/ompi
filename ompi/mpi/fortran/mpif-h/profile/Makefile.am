@@ -424,15 +424,9 @@ $(linked_files):
 # psizeof_f.f90 is generated based on some results from configure tests.
 CLEANFILES += psizeof_f.f90
 
-# Build the MPI_SIZEOF code in a separate convenience library (see
-# lengthy comment in ompi/mpi/fortran/mpif-h/Makefile.am for an
-# explanation why).
-if BUILD_FORTRAN_SIZEOF
-noinst_LTLIBRARIES += libmpi_mpifh_psizeof.la
-# Do not dist this file; it is generated
-nodist_libmpi_mpifh_psizeof_la_SOURCES = psizeof_f.f90
-libmpi_mpifh_pmpi_la_LIBADD += libmpi_mpifh_psizeof.la
-endif
+# Explicitly set the linking command to $(LINK) (see lengthy comment
+# in ompi/mpi/fortran/mpif-h/Makefile.am for an explanation why).
+libmpi_mpifh_pmpi_la_LINK = $(LINK)
 
 sizeof_pl=$(top_srcdir)/ompi/mpi/fortran/base/gen-mpi-sizeof.pl
 
@@ -453,6 +447,11 @@ psizeof_f.f90:
 #
 nodist_libmpi_mpifh_pmpi_la_SOURCES = \
         $(linked_files)
+
+if BUILD_FORTRAN_SIZEOF
+# Do not dist this file; it is generated
+nodist_libmpi_mpifh_pmpi_la_SOURCES += psizeof_f.f90
+endif
 
 # Conditionally install the header files
 
